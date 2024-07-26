@@ -191,15 +191,18 @@ impl Scanner {
     // methods for token handling
     fn add_token(&mut self, token_type: TokenType) {
         // println!("Adding token: {:?}", token_type);
-        self.add_token_literal::<()>(token_type, None)
+        self.add_token_literal::<String>(token_type, None)
     }
 
-    fn add_token_literal<T>(&mut self, token_type: TokenType, literal: Option<T>) {
+    fn add_token_literal<T: ToString>(&mut self, token_type: TokenType, literal: Option<T>) {
         let text = &self.source[self.start..self.current];
         let token = Token {
             token_type,
             lexeme: text.to_string(),
-            literal: "".to_string(),
+            literal: match literal {
+                Some(l) => l.to_string(),
+                None => "".to_string(),
+            },
             line: self.line as usize,
         };
         self.tokens.push(token);
@@ -215,7 +218,9 @@ impl Scanner {
         }
 
         if self.is_at_end() {
-            panic!("Unterminated string");
+            eprintln!("[line {}] Error: Unterminated string.", self.line);
+            self.has_error = true;
+            return;
         }
 
         self.advance();

@@ -59,6 +59,11 @@ pub struct Token {
 
 impl Token {
     pub fn to_string(&self) -> String {
-        format!("{:?} {} null", self.token_type, self.lexeme)
+        let literal = if self.literal.is_empty() {
+            "null".to_string()
+        } else {
+            self.literal.clone()
+        };
+        format!("{:?} {} {}", self.token_type, self.lexeme, literal)
     }
 }
