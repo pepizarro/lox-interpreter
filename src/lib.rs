@@ -8,7 +8,7 @@ mod scanner;
 mod token;
 
 pub struct Lox {
-    had_error: bool,
+    pub had_error: bool,
     had_runtime_error: bool,
 }
 
@@ -20,13 +20,18 @@ pub fn build_lox() -> Lox {
 }
 
 impl Lox {
-    // pub fn run_file(&self, path: &str) {
-    //     let file_contents = fs::read_to_string(path).unwrap_or_else(|_| {
-    //         writeln!(io::stderr(), "Failed to read file {}", path).unwrap();
-    //         String::new()
-    //     });
-    //     self.run(file_contents);
-    // }
+    pub fn run_file(&mut self, path: &str) {
+        let file_contents = fs::read_to_string(path).unwrap_or_else(|_| {
+            writeln!(io::stderr(), "Failed to read file {}", path).unwrap();
+            String::new()
+        });
+        self.run(file_contents);
+
+        if self.had_error {
+            println!("Exiting with error code 65");
+            std::process::exit(65);
+        }
+    }
 
     // fn run_prompt() {
     //     loop {
@@ -39,12 +44,15 @@ impl Lox {
     //     }
     // }
 
-    pub fn run(&self, source: String) {
+    pub fn run(&mut self, source: String) {
         let mut scanner = build_scanner(source);
         let tokens = scanner.scan_tokens();
 
         for token in tokens {
             println!("{}", token.to_string());
+        }
+        if scanner.has_error {
+            self.had_error = true;
         }
         println!("EOF  null");
     }

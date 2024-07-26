@@ -26,8 +26,14 @@ fn main() {
 
             if !file_contents.is_empty() {
                 writeln!(io::stderr(), "Running Lox interpreter!").unwrap();
-                let lox = build_lox();
+                let mut lox = build_lox();
                 lox.run(file_contents);
+
+                if lox.had_error {
+                    // println!("Exiting with error code 65");
+                    // writeln!(io::stderr(), "Exiting with error code 65").unwrap();
+                    std::process::exit(65);
+                }
             } else {
                 println!("EOF  null"); // Placeholder, remove this line when implementing the scanner
             }

@@ -10,6 +10,8 @@ pub struct Scanner {
     start: usize,
     current: usize,
     line: u32,
+
+    pub has_error: bool,
 }
 
 pub fn build_scanner(source: String) -> Scanner {
@@ -38,6 +40,7 @@ pub fn build_scanner(source: String) -> Scanner {
         start: 0,
         current: 0,
         line: 1,
+        has_error: false,
     }
 }
 
@@ -113,8 +116,9 @@ impl Scanner {
                 } else if is_alpha(c) {
                     self.identifier();
                 } else {
-                    // Lox class error here ?
-                    panic!("Unexpected character")
+                    // Lox class error here ? how ??
+                    eprintln!("[line {}] Error: Unexpected character: {}", self.line, c);
+                    self.has_error = true;
                 }
             }
         }
