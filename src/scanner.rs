@@ -54,11 +54,20 @@ impl Scanner {
             self.scan_token();
         }
 
+        self.tokens.push(Token {
+            token_type: EOF,
+            lexeme: "".to_string(),
+            literal: "".to_string(),
+            line: self.line as usize,
+        });
+
         return self.tokens.clone();
     }
 
     fn scan_token(&mut self) {
-        let c = self.advance();
+        let c = self.source.as_bytes()[self.current] as char;
+        self.current += 1;
+
         match c {
             '(' => self.add_token(LEFT_PAREN),
             ')' => self.add_token(RIGHT_PAREN),
@@ -96,6 +105,15 @@ impl Scanner {
                     self.add_token(GREATER_EQUAL);
                 } else {
                     self.add_token(GREATER);
+                }
+            }
+            '/' => {
+                if self.match_char('/') {
+                    while self.peek() != '\n' && !self.is_at_end() {
+                        self.advance();
+                    }
+                } else {
+                    self.add_token(SLASH);
                 }
             }
             ' ' | '\r' | '\t' => (),
@@ -139,9 +157,9 @@ impl Scanner {
     }
 
     // methods for moving through the source
-    fn advance(&mut self) -> char {
+    fn advance(&mut self) {
         self.current += 1;
-        self.source.chars().nth(self.current - 1).unwrap()
+        // self.source.chars().nth(self.current - 1).unwrap()
     }
 
     fn match_char(&mut self, expected: char) -> bool {
@@ -160,14 +178,14 @@ impl Scanner {
         if self.is_at_end() {
             return '\0';
         }
-        self.source.chars().nth(self.current).unwrap()
+        self.source.as_bytes()[self.current] as char
     }
 
     fn peek_next(&self) -> char {
         if self.current + 1 >= self.source.len() {
             return '\0';
         }
-        self.source.chars().nth(self.current + 1).unwrap()
+        self.source.as_bytes()[self.current + 1] as char
     }
 
     // methods for token handling

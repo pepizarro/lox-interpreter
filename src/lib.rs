@@ -54,7 +54,6 @@ impl Lox {
         if scanner.has_error {
             self.had_error = true;
         }
-        println!("EOF  null");
     }
 
     fn error(&self, line: usize, message: &str) {
