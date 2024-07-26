@@ -72,7 +72,7 @@ impl Scanner {
             '*' => self.add_token(STAR),
             '!' => {
                 if self.match_char('=') {
-                    self.add_token(BANGEQUAL);
+                    self.add_token(BANG_EQUAL);
                 } else {
                     self.add_token(BANG);
                 }
@@ -86,14 +86,14 @@ impl Scanner {
             }
             '<' => {
                 if self.match_char('=') {
-                    self.add_token(LESSEQUAL);
+                    self.add_token(LESS_EQUAL);
                 } else {
                     self.add_token(LESS);
                 }
             }
             '>' => {
                 if self.match_char('=') {
-                    self.add_token(GREATEREQUAL);
+                    self.add_token(GREATER_EQUAL);
                 } else {
                     self.add_token(GREATER);
                 }
