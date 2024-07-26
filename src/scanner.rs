@@ -59,8 +59,8 @@ impl Scanner {
         match c {
             '(' => self.add_token(LEFT_PAREN),
             ')' => self.add_token(RIGHT_PAREN),
-            '{' => self.add_token(LEFTBRACE),
-            '}' => self.add_token(RIGHTBRACE),
+            '{' => self.add_token(LEFT_BRACE),
+            '}' => self.add_token(RIGHT_BRACE),
             ',' => self.add_token(COMMA),
             '.' => self.add_token(DOT),
             '-' => self.add_token(MINUS),

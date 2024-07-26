@@ -3,8 +3,8 @@ pub enum TokenType {
     // Single-character tokens.
     LEFT_PAREN,
     RIGHT_PAREN,
-    LEFTBRACE,
-    RIGHTBRACE,
+    LEFT_BRACE,
+    RIGHT_BRACE,
     COMMA,
     DOT,
     MINUS,
