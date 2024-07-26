@@ -79,7 +79,7 @@ impl Scanner {
             }
             '=' => {
                 if self.match_char('=') {
-                    self.add_token(EQUALEQUAL);
+                    self.add_token(EQUAL_EQUAL);
                 } else {
                     self.add_token(EQUAL);
                 }
