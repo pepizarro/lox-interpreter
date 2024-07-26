@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{any::Any, collections::HashMap, fmt::Display};
 
 use crate::token::{Token, TokenType, TokenType::*};
 
@@ -194,13 +194,17 @@ impl Scanner {
         self.add_token_literal::<String>(token_type, None)
     }
 
-    fn add_token_literal<T: ToString>(&mut self, token_type: TokenType, literal: Option<T>) {
+    fn add_token_literal<T: ToString + Display>(
+        &mut self,
+        token_type: TokenType,
+        literal: Option<T>,
+    ) {
         let text = &self.source[self.start..self.current];
         let token = Token {
             token_type,
             lexeme: text.to_string(),
             literal: match literal {
-                Some(l) => l.to_string(),
+                Some(l) => with_decimal(l),
                 None => "".to_string(),
             },
             line: self.line as usize,
@@ -236,6 +240,7 @@ impl Scanner {
 
         // look for fractional part
         if self.peek() == '.' && is_digit(self.peek_next()) {
+            // consume the '.'
             self.advance();
             while is_digit(self.peek()) {
                 self.advance();
@@ -248,7 +253,7 @@ impl Scanner {
             // ERR HANDLE
             Err(_) => panic!("Error parsing number"),
         };
-        self.add_token_literal(NUMBER, Some(f));
+        self.add_token_literal(NUMBER, Some(f + 0.0));
     }
 }
 
@@ -262,4 +267,23 @@ fn is_alpha_numeric(c: char) -> bool {
 
 fn is_digit(c: char) -> bool {
     c >= '0' && c <= '9'
+}
+
+fn with_decimal<T: Display>(value: T) -> String {
+    let formatted = format!("{:.1}", value);
+
+    if formatted.ends_with(".0") {
+        formatted
+    } else {
+        return value.to_string();
+    }
+}
+
+fn is_float<T: Any>(value: &T) -> bool {
+    let value_any: &dyn Any = value;
+    if value_any.is::<f32>() || value_any.is::<f64>() {
+        return true;
+    } else {
+        return false;
+    }
 }
